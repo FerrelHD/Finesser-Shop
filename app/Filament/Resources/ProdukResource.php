@@ -57,6 +57,8 @@ class ProdukResource extends Resource
                     ->disk('public')
                     ->visibility('public')
                     ->directory('produks')
+                    ->openable()
+                    ->downloadable()
                     ->required(),
                 
                 FileUpload::make('preview_image_2')
@@ -65,6 +67,8 @@ class ProdukResource extends Resource
                     ->disk('public')
                     ->visibility('public')
                     ->directory('produks')
+                    ->openable()
+                    ->downloadable()
                     ->nullable(),
                 
                 FileUpload::make('preview_image_3')
@@ -73,6 +77,8 @@ class ProdukResource extends Resource
                     ->disk('public')
                     ->visibility('public')
                     ->directory('produks')
+                    ->openable()
+                    ->downloadable()
                     ->nullable(),
                 
                 FileUpload::make('preview_video')
@@ -81,7 +87,9 @@ class ProdukResource extends Resource
                     ->disk('public')
                     ->visibility('public')
                     ->directory('produks/videos')
-                    ->maxSize(50000) 
+                    ->maxSize(50000)
+                    ->openable()
+                    ->downloadable()
                     ->nullable(),
                 
                 Forms\Components\TextInput::make('price')
