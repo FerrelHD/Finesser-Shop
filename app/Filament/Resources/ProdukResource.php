@@ -42,10 +42,13 @@ class ProdukResource extends Resource
                     ])
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('file_path')
-                    ->label('File Utama')
+                    ->label('File Utama (Aset Digital)')
                     ->disk('local')
                     ->directory('private/products')
                     ->maxSize(5242880)
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create')
+                    ->helperText('Kosongkan jika tidak ingin mengganti file master yang sudah ada.')
                     ->nullable(),
                 Forms\Components\TextInput::make('file_type')
                     ->required()
@@ -59,7 +62,8 @@ class ProdukResource extends Resource
                     ->directory('produks')
                     ->openable()
                     ->downloadable()
-                    ->required(),
+                    ->dehydrated(fn ($state) => filled($state))
+                    ->required(fn (string $operation): bool => $operation === 'create'),
                 
                 FileUpload::make('preview_image_2')
                     ->label('Gambar Preview 2')
