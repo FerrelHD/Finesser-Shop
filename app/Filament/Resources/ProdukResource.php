@@ -42,11 +42,11 @@ class ProdukResource extends Resource
                     ])
                     ->columnSpanFull(),
                 Forms\Components\FileUpload::make('file_path')
-                    ->required()
                     ->label('File Utama')
-                    ->directory('products/files')
+                    ->disk('local')
+                    ->directory('private/products')
                     ->maxSize(5242880)
-                    ->rules(['max:5242880']),
+                    ->nullable(),
                 Forms\Components\TextInput::make('file_type')
                     ->required()
                     ->maxLength(255)
@@ -54,26 +54,32 @@ class ProdukResource extends Resource
                 FileUpload::make('preview_image')
                     ->label('Gambar Preview Utama')
                     ->image()
+                    ->disk('public')
+                    ->visibility('public')
                     ->directory('produks')
                     ->required(),
                 
                 FileUpload::make('preview_image_2')
                     ->label('Gambar Preview 2')
                     ->image()
+                    ->disk('public')
+                    ->visibility('public')
                     ->directory('produks')
                     ->nullable(),
                 
                 FileUpload::make('preview_image_3')
                     ->label('Gambar Preview 3')
                     ->image()
+                    ->disk('public')
+                    ->visibility('public')
                     ->directory('produks')
                     ->nullable(),
                 
-                    FileUpload::make('preview_video')
+                FileUpload::make('preview_video')
                     ->label('Video Preview')
                     ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg'])
-                    ->disk('public')  // Tambahkan ini
-                    ->visibility('public')  // Tambahkan ini
+                    ->disk('public')
+                    ->visibility('public')
                     ->directory('produks/videos')
                     ->maxSize(50000) 
                     ->nullable(),
