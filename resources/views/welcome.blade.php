@@ -64,7 +64,13 @@
                             </div>
                         </div>
                     @empty
-                        <p>Tidak ada produk unggulan tersedia.</p>
+                        <div class="text-center py-4 w-100" style="grid-column: 1 / -1;">
+                            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mx-auto text-center" style="max-width: 440px; width: 100%;">
+                                <i class="fas fa-star fa-2x mb-2 text-warning opacity-75"></i>
+                                <h6 class="fw-bold text-dark mb-1">Belum Ada Produk Unggulan</h6>
+                                <p class="text-muted small mb-0">Produk unggulan akan segera hadir.</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
                 
@@ -123,7 +129,13 @@
                             </div>
                         </div>
                     @empty
-                        <p>Tidak ada produk bundling tersedia.</p>
+                        <div class="text-center py-4 w-100" style="grid-column: 1 / -1;">
+                            <div class="p-4 bg-white rounded-4 shadow-sm d-inline-block mx-auto text-center" style="max-width: 440px; width: 100%;">
+                                <i class="fas fa-boxes-stacked fa-2x mb-2 text-danger opacity-75"></i>
+                                <h6 class="fw-bold text-dark mb-1">Belum Ada Paket Bundling</h6>
+                                <p class="text-muted small mb-0">Paket bundling diskon akan segera diperbarui.</p>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
             </div>

@@ -109,7 +109,16 @@
                                 </div>
                             </div>
                         @empty
-                            <p class="text-muted text-center w-100">Tidak ada produk ditemukan.</p>
+                            <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+                                <div class="mb-3 text-muted opacity-50">
+                                    <i class="fas fa-search fa-3x"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-1">Tidak Ada Hasil Ditemukan</h5>
+                                <p class="text-muted small mb-3">Coba gunakan kata kunci lain seperti "3d", "anime", "donut", atau "vfx".</p>
+                                <a href="{{ route('shop') }}" class="btn btn-outline-dark rounded-pill px-4 py-2 small">
+                                    Lihat Semua Produk
+                                </a>
+                            </div>
                         @endforelse
                     </div>
                 </div>

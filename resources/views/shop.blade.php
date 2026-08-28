@@ -134,7 +134,18 @@
                             </div>
                         </div>
                     @empty
-                        <p>Tidak ada produk tersedia.</p>
+                        <div class="text-center py-5 w-100" style="grid-column: 1 / -1;">
+                            <div class="p-5 bg-white rounded-4 shadow-sm d-inline-block mx-auto text-center" style="max-width: 480px; width: 100%;">
+                                <div class="mb-3">
+                                    <i class="fas fa-layer-group fa-3x" style="color: #cbd5e1;"></i>
+                                </div>
+                                <h5 class="fw-bold text-dark mb-2">Belum Ada Produk</h5>
+                                <p class="text-muted small mb-4">Tidak ada produk ditemukan untuk filter kategori yang Anda pilih.</p>
+                                <a href="{{ route('shop') }}" class="btn btn-dark rounded-pill px-4 py-2 fw-medium">
+                                    <i class="fas fa-sync-alt me-2"></i>Reset & Tampilkan Semua
+                                </a>
+                            </div>
+                        </div>
                     @endforelse
                 </div>
             </div>

@@ -60,23 +60,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/orders/{order}/pay', [OrderController::class, 'pay'])->name('orders.pay');
     Route::post('/orders/{order}/cancel', [OrderController::class, 'cancel'])->name('orders.cancel');
     // File Download (Verified Only)
-    Route::get('/download/{order}', function (App\Models\Order $order) {
-        if (auth()->id() !== $order->user_id && !auth()->user()->hasRole('admin')) {
-            abort(403);
-        }
-
-        if ($order->status !== 'verified') {
-            return redirect()->back()->with('error', 'Pembayaran belum terverifikasi');
-        }
-
-        $filePath = $order->product->file_path;
-
-        if (!Storage::exists($filePath)) {
-            return redirect()->back()->with('error', 'File tidak ditemukan');
-        }
-
-        return Storage::download($filePath, $order->product->title . '.' . pathinfo($filePath, PATHINFO_EXTENSION));
-    })->name('download.file');
+    Route::get('/download/{order}', [OrderController::class, 'download'])->name('download.file');
 });
 
 // =======================

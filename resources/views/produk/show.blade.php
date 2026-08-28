@@ -4,407 +4,453 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{{ $produk->title ?? 'Detail Produk' }} - Finesser Shop</title>
+    <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link href="{{ asset('css/style.css') }}" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Poppins', sans-serif;
-            padding-top: 80px;
+        .product-detail-page {
+            margin-top: 90px;
+            margin-bottom: 60px;
         }
-        .product-image-container {
+        
+        .breadcrumb-item a {
+            color: #64748b;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .breadcrumb-item a:hover {
+            color: #0f172a;
+        }
+        .breadcrumb-item.active {
+            color: #0f172a;
+            font-weight: 600;
+        }
+
+        .gallery-main {
             position: relative;
             width: 100%;
-            height: 400px;
-            min-height: 400px;
+            height: 440px;
+            background: #ffffff;
+            border-radius: 18px;
             overflow: hidden;
-            margin-top: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid #f1f5f9;
         }
-        .product-image {
+
+        .gallery-slide {
             width: 100%;
             height: 100%;
-            border-radius: 8px;
             position: absolute;
             top: 0;
             left: 0;
             opacity: 0;
-            transition: opacity 0.5s ease;
-            z-index: 1;
-            display: none;
-            object-fit: cover;
+            visibility: hidden;
+            transition: opacity 0.4s ease, visibility 0.4s ease;
         }
-        .product-image.active {
+
+        .gallery-slide.active {
             opacity: 1;
-            z-index: 2;
+            visibility: visible;
             position: relative;
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
             display: block;
         }
-        .product-image.fade-in {
-            animation: fadeIn 0.5s;
-        }
-        .product-image.fade-out {
-            animation: fadeOut 0.5s;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes fadeOut {
-            from { opacity: 1; }
-            to { opacity: 0; }
-        }
-        .product-title {
-            font-size: 2rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            margin-top: 30px;
-        }
-        .product-price {
-            font-size: 1.8rem;
-            font-weight: 700;
-            color: #333;
-            margin-bottom: 1.5rem;
-        }
-        .btn-buy-now {
-            background-color: white;
-            color: #4CAF50;
-            border: 2px solid #4CAF50;
-            border-radius: 4px;
-            padding: 12px 24px;
-            font-weight: 600;
+
+        .gallery-slide video {
             width: 100%;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
         }
-        .btn-buy-now:hover {
-            background-color: #f0f8f0;
+
+        .gallery-thumbnails {
+            display: flex;
+            gap: 12px;
+            margin-top: 16px;
+            overflow-x: auto;
+            padding-bottom: 6px;
         }
-        .product-requirements {
-            margin-top: 30px;
-            padding: 15px 0;
-            border-top: 1px solid #eee;
+
+        .thumb-btn {
+            width: 80px;
+            height: 65px;
+            border-radius: 10px;
+            overflow: hidden;
+            border: 2px solid transparent;
+            cursor: pointer;
+            padding: 0;
+            background: #fff;
+            transition: all 0.2s ease;
+            flex-shrink: 0;
+            opacity: 0.6;
         }
-        .product-requirements h5 {
-            font-weight: 600;
-            margin-bottom: 15px;
+
+        .thumb-btn:hover {
+            opacity: 0.9;
         }
-        .nav-arrows {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.7);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
+
+        .thumb-btn.active {
+            border-color: #0f172a;
+            opacity: 1;
+            transform: scale(1.04);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .thumb-btn img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .thumb-video-icon {
+            width: 100%;
+            height: 100%;
+            background: #1e293b;
+            color: #fff;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: background 0.3s ease;
+            font-size: 1.2rem;
         }
-        .nav-arrows:hover {
+
+        .gallery-arrow {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 42px;
+            height: 42px;
             background: rgba(255, 255, 255, 0.9);
-        }
-        .nav-prev {
-            left: 10px;
-        }
-        .nav-next {
-            right: 10px;
-        }
-        .slider-indicators {
-            display: flex;
-            justify-content: center;
-            margin-top: 15px;
-        }
-        .indicator {
-            width: 12px;
-            height: 12px;
             border-radius: 50%;
-            background-color: #ddd;
-            margin: 0 5px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             cursor: pointer;
-            transition: background-color 0.3s ease;
+            z-index: 5;
+            transition: all 0.2s ease;
+            color: #0f172a;
         }
-        .indicator.active {
-            background-color: #666;
+
+        .gallery-arrow:hover {
+            background: #fff;
+            transform: translateY(-50%) scale(1.08);
         }
-        .tags {
-            margin-top: 15px;
+
+        .gallery-prev { left: 14px; }
+        .gallery-next { right: 14px; }
+
+        .product-meta-card {
+            background: #ffffff;
+            border-radius: 18px;
+            padding: 32px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.06);
+            border: 1px solid #f1f5f9;
         }
-        .tag {
+
+        .product-badge-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 14px;
+        }
+
+        .product-price-tag {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 20px;
+        }
+
+        .btn-buy-action {
+            background: #0f172a;
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 28px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            width: 100%;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            text-decoration: none;
+            box-shadow: 0 8px 20px rgba(15, 23, 42, 0.15);
+        }
+
+        .btn-buy-action:hover {
+            background: #1e293b;
+            color: #fff;
+            transform: translateY(-2px);
+            box-shadow: 0 12px 24px rgba(15, 23, 42, 0.25);
+        }
+
+        .benefit-list {
+            list-style: none;
+            padding: 0;
+            margin: 24px 0 0 0;
+            border-top: 1px solid #f1f5f9;
+            padding-top: 20px;
+        }
+
+        .benefit-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.92rem;
+            color: #475569;
+            margin-bottom: 10px;
+        }
+
+        .benefit-item i {
+            color: #10b981;
+        }
+
+        .layer-badge {
             display: inline-block;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            padding: 5px 10px;
-            margin: 0 5px 5px 0;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            color: #334155;
+            padding: 6px 14px;
+            border-radius: 8px;
             font-size: 0.85rem;
-        }
-        .license-badge {
-            display: inline-block;
-            background-color: #e9ecef;
-            color: #495057;
-            border-radius: 4px;
-            padding: 6px 12px;
-            margin-top: 15px;
-            font-size: 0.9rem;
             font-weight: 500;
+            margin: 0 6px 6px 0;
+        }
+
+        .tag-pill {
+            display: inline-block;
+            background: #f1f5f9;
+            color: #64748b;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            margin: 0 4px 6px 0;
+            text-decoration: none;
+        }
+
+        @media (max-width: 768px) {
+            .gallery-main {
+                height: 300px;
+            }
+            .product-meta-card {
+                padding: 24px 18px;
+            }
+            .product-price-tag {
+                font-size: 1.8rem;
+            }
         }
     </style>
 </head>
 <body>
     @include('partials.layout.navbar')
 
-    <div class="container my-5 pt-4">
-        <div class="row">
-            <div class="col-lg-6 mb-4">
-                <div class="product-image-container">
-                    @if(isset($produk->preview_image) && !empty($produk->preview_image))
-                        <img 
-                            src="{{ asset('storage/' . $produk->preview_image) }}" 
-                            class="product-image active" 
-                            alt="{{ $produk->title }}" 
-                            onerror="this.onerror=null; this.src='{{ asset('images/placeholder.jpg') }}'"
-                        >
-                    @else
-                        <div class="bg-light d-flex align-items-center justify-content-center rounded" style="height: 400px">
-                            <p class="text-muted">Tidak ada gambar</p>
+    <main class="container product-detail-page">
+        <!-- Breadcrumb -->
+        <nav aria-label="breadcrumb" class="mb-4">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{{ route('home') }}">Home</a></li>
+                <li class="breadcrumb-item"><a href="{{ route('shop') }}">Shop</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ Str::limit($produk->title, 40) }}</li>
+            </ol>
+        </nav>
+
+        <div class="row g-4">
+            <!-- Left: Gallery Section -->
+            <div class="col-lg-7">
+                <div class="gallery-main" id="productGallery">
+                    @php
+                        $slides = [];
+                        if (!empty($produk->preview_image)) $slides[] = ['type' => 'image', 'url' => asset('storage/' . $produk->preview_image)];
+                        if (!empty($produk->preview_image_2)) $slides[] = ['type' => 'image', 'url' => asset('storage/' . $produk->preview_image_2)];
+                        if (!empty($produk->preview_image_3)) $slides[] = ['type' => 'image', 'url' => asset('storage/' . $produk->preview_image_3)];
+                        if (!empty($produk->preview_video)) $slides[] = ['type' => 'video', 'url' => asset('storage/' . $produk->preview_video)];
+                    @endphp
+
+                    @forelse($slides as $index => $slide)
+                        <div class="gallery-slide {{ $index === 0 ? 'active' : '' }}" data-index="{{ $index }}">
+                            @if($slide['type'] === 'image')
+                                <img src="{{ $slide['url'] }}" alt="{{ $produk->title }}" onerror="this.src='{{ asset('images/placeholder.jpg') }}'">
+                            @else
+                                <video controls>
+                                    <source src="{{ $slide['url'] }}" type="video/mp4">
+                                    Browser Anda tidak mendukung tag video.
+                                </video>
+                            @endif
                         </div>
-                    @endif
-                    
-                    @if(isset($produk->preview_image_2) && !empty($produk->preview_image_2))
-                        <img src="{{ asset('storage/' . $produk->preview_image_2) }}" class="product-image" style="display: none;" alt="{{ $produk->title }}" onerror="this.src='{{ asset('images/placeholder.jpg') }}';">
-                    @endif
-                    
-                    @if(isset($produk->preview_image_3) && !empty($produk->preview_image_3))
-                        <img src="{{ asset('storage/' . $produk->preview_image_3) }}" class="product-image" style="display: none;" alt="{{ $produk->title }}" onerror="this.src='{{ asset('images/placeholder.jpg') }}';">
-                    @endif
-                    
-                    @if(isset($produk->preview_video) && !empty($produk->preview_video))
-                        <div class="product-image" style="display: none;">
-                            <video width="100%" height="100%" controls>
-                                <source src="{{ asset('storage/' . $produk->preview_video) }}" type="video/mp4">
-                                Browser Anda tidak mendukung tag video.
-                            </video>
+                    @empty
+                        <div class="gallery-slide active d-flex align-items-center justify-content-center bg-light">
+                            <p class="text-muted"><i class="fas fa-image me-2"></i>Tidak ada pratinjau</p>
                         </div>
+                    @endforelse
+
+                    @if(count($slides) > 1)
+                        <button type="button" class="gallery-arrow gallery-prev" id="galleryPrev" aria-label="Previous image">
+                            <i class="fas fa-chevron-left"></i>
+                        </button>
+                        <button type="button" class="gallery-arrow gallery-next" id="galleryNext" aria-label="Next image">
+                            <i class="fas fa-chevron-right"></i>
+                        </button>
                     @endif
-                    
-                    <div class="nav-arrows nav-prev">
-                        <i class="fas fa-chevron-left"></i>
-                    </div>
-                    <div class="nav-arrows nav-next">
-                        <i class="fas fa-chevron-right"></i>
-                    </div>
                 </div>
-                <div class="slider-indicators">
-                    <div class="indicator active"></div>
-                    @if(isset($produk->preview_image_2) && !empty($produk->preview_image_2))
-                        <div class="indicator"></div>
+
+                <!-- Thumbnails -->
+                @if(count($slides) > 1)
+                    <div class="gallery-thumbnails">
+                        @foreach($slides as $index => $slide)
+                            <button type="button" class="thumb-btn {{ $index === 0 ? 'active' : '' }}" data-target="{{ $index }}">
+                                @if($slide['type'] === 'image')
+                                    <img src="{{ $slide['url'] }}" alt="Thumbnail {{ $index + 1 }}">
+                                @else
+                                    <div class="thumb-video-icon">
+                                        <i class="fas fa-play"></i>
+                                    </div>
+                                @endif
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+
+                <!-- Detailed Description Section -->
+                <div class="product-meta-card mt-4">
+                    <h5 class="fw-bold text-dark mb-3"><i class="fas fa-align-left me-2 text-primary"></i>Deskripsi Produk</h5>
+                    <div class="text-secondary lh-lg mb-4">
+                        {!! nl2br(e($produk->description)) !!}
+                    </div>
+
+                    @if(!empty($produk->editable_layers))
+                        <h6 class="fw-bold text-dark mt-4 mb-2"><i class="fas fa-layer-group me-2 text-primary"></i>Editable Layers & Fitur:</h6>
+                        <div class="mb-3">
+                            @foreach($produk->editable_layers as $layer)
+                                <span class="layer-badge"><i class="fas fa-check-circle me-1 text-success small"></i>{{ $layer }}</span>
+                            @endforeach
+                        </div>
                     @endif
-                    @if(isset($produk->preview_image_3) && !empty($produk->preview_image_3))
-                        <div class="indicator"></div>
-                    @endif
-                    @if(isset($produk->preview_video) && !empty($produk->preview_video))
-                        <div class="indicator"></div>
+
+                    @if(!empty($produk->tags))
+                        <div class="mt-4 pt-3 border-top">
+                            <span class="text-muted small fw-semibold me-2">Tags:</span>
+                            @foreach(explode(',', $produk->tags) as $tag)
+                                <span class="tag-pill">#{{ trim($tag) }}</span>
+                            @endforeach
+                        </div>
                     @endif
                 </div>
             </div>
-            <div class="col-lg-6">
-                <h1 class="product-title">{{ $produk->title ?? 'Judul Produk' }}</h1>
-                
-                <div class="product-price">
-                    @if($produk->price == 0)
-                        Gratis
-                    @else
-                        Rp {{ number_format($produk->price, 0, ',', '.') }}
-                    @endif
-                </div>
 
-                <a href="{{ route('checkout.show', $produk) }}" class="btn btn-buy-now">Beli Sekarang</a>
+            <!-- Right: Action & Info Card -->
+            <div class="col-lg-5">
+                <div class="product-meta-card sticky-top" style="top: 100px; z-index: 10;">
+                    <div class="product-badge-group">
+                        @if(in_array(strtolower($produk->file_type), ['mp4', 'mov', 'avi']))
+                            <span class="badge bg-primary px-3 py-2 rounded-pill"><i class="fas fa-video me-1"></i>Video Project</span>
+                        @elseif(in_array(strtolower($produk->file_type), ['3d', 'obj', 'fbx', 'blend']))
+                            <span class="badge bg-success px-3 py-2 rounded-pill"><i class="fas fa-cube me-1"></i>3D Asset</span>
+                        @elseif(strtolower($produk->file_type) === 'psd')
+                            <span class="badge bg-info text-dark px-3 py-2 rounded-pill"><i class="fas fa-paint-brush me-1"></i>PSD Template</span>
+                        @else
+                            <span class="badge bg-secondary px-3 py-2 rounded-pill">{{ strtoupper($produk->file_type) }}</span>
+                        @endif
 
-                @if(isset($produk->description) && !empty($produk->description))
-                <div class="product-requirements">
-                    <h5>Deskripsi</h5>
-                    <div>{!! $produk->description !!}</div>
-                </div>
-                @endif
-                
-                <div class="product-requirements">
-                    @if(isset($produk->editable_layers) && !empty($produk->editable_layers))
-                    <p><strong>Editable Layers:</strong>
-                        @foreach($produk->editable_layers as $layer)
-                            <span class="tag">{{ $layer }}</span>
-                        @endforeach
-                    </p>
-                    @endif
-                    
-                    @if(isset($produk->file_type) && !empty($produk->file_type))
-                    <p><strong>Tipe File:</strong> {{ $produk->file_type }}</p>
-                    @endif
-                    
-                    @if(isset($produk->license_type) && !empty($produk->license_type))
-                    <div class="license-badge">
-                        <i class="fas fa-certificate me-1"></i> {{ $produk->license_type ?? 'Personal' }} License
+                        @if($produk->is_featured)
+                            <span class="badge bg-warning text-dark px-3 py-2 rounded-pill"><i class="fas fa-star me-1"></i>Unggulan</span>
+                        @endif
+
+                        @if($produk->is_bundling)
+                            <span class="badge bg-danger px-3 py-2 rounded-pill"><i class="fas fa-boxes-stacked me-1"></i>Bundling Pack</span>
+                        @endif
                     </div>
-                    @endif
+
+                    <h2 class="fw-bold text-dark mb-3">{{ $produk->title }}</h2>
+
+                    <div class="product-price-tag">
+                        @if($produk->price == 0)
+                            <span class="text-success">Gratis</span>
+                        @else
+                            Rp {{ number_format($produk->price, 0, ',', '.') }}
+                        @endif
+                    </div>
+
+                    <!-- Buy CTA -->
+                    <a href="{{ route('checkout.show', $produk) }}" class="btn-buy-action mb-3">
+                        <i class="fas fa-bolt"></i> Beli Sekarang
+                    </a>
+
+                    <!-- Benefits / Security Guarantee -->
+                    <ul class="benefit-list">
+                        <li class="benefit-item">
+                            <i class="fas fa-bolt"></i>
+                            <span>Akses download digital instan setelah pembayaran terverifikasi</span>
+                        </li>
+                        <li class="benefit-item">
+                            <i class="fas fa-shield-halved"></i>
+                            <span>File project asli, bersih, dan bebas virus</span>
+                        </li>
+                        <li class="benefit-item">
+                            <i class="fas fa-certificate"></i>
+                            <span>Lisensi: <strong>{{ ucfirst($produk->license_type ?? 'Personal') }} License</strong></span>
+                        </li>
+                        <li class="benefit-item">
+                            <i class="fas fa-file-zipper"></i>
+                            <span>Format File: <strong>.{{ strtoupper($produk->file_type) }}</strong></span>
+                        </li>
+                    </ul>
                 </div>
-                
-                @if(isset($produk->tags) && !empty($produk->tags))
-                <div class="tags">
-                    <h5>Tags:</h5>
-                    @foreach(explode(',', $produk->tags) as $tag)
-                        <span class="tag">{{ trim($tag) }}</span>
-                    @endforeach
-                </div>
-                @endif
             </div>
         </div>
-    </div>
+    </main>
 
     @include('partials.layout.footer')
 
+    <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="{{ asset('js/app.js') }}"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const images = document.querySelectorAll('.product-image');
-            const indicators = document.querySelectorAll('.indicator');
-            const prevBtn = document.querySelector('.nav-prev');
-            const nextBtn = document.querySelector('.nav-next');
-            let currentIndex = 0;
-            let isAnimating = false;
-            
-            // Inisialisasi tampilan awal
-            function initSlider() {
-                if (images.length > 0) {
-                    images.forEach((img, index) => {
-                        if (index === 0) {
-                            img.classList.add('active');
-                            img.style.display = 'block';
-                        } else {
-                            img.classList.remove('active');
-                            img.style.display = 'none';
-                        }
-                    });
-                }
+        document.addEventListener('DOMContentLoaded', function () {
+            const slides = document.querySelectorAll('.gallery-slide');
+            const thumbs = document.querySelectorAll('.thumb-btn');
+            const prevBtn = document.getElementById('galleryPrev');
+            const nextBtn = document.getElementById('galleryNext');
+            let current = 0;
+
+            function goToSlide(index) {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+
+                slides.forEach(s => s.classList.remove('active'));
+                thumbs.forEach(t => t.classList.remove('active'));
+
+                if (slides[index]) slides[index].classList.add('active');
+                if (thumbs[index]) thumbs[index].classList.add('active');
+
+                current = index;
             }
-            
-            initSlider();
-            
-            // Fungsi untuk menampilkan gambar dengan index tertentu
-            function showImage(newIndex) {
-                if (isAnimating || newIndex === currentIndex) return;
-                isAnimating = true;
-            
-                indicators.forEach(ind => ind.classList.remove('active'));
-                if (indicators[newIndex]) {
-                    indicators[newIndex].classList.add('active');
-                }
-            
-                const currentImg = images[currentIndex];
-                const nextImg = images[newIndex];
-            
-                if (nextImg) {
-                    // Jangan langsung display block, biarkan animasi berjalan bersamaan
-                    nextImg.style.display = 'block';
-                    nextImg.classList.remove('active', 'fade-in', 'fade-out');
-                    nextImg.classList.add('fade-in');
-            
-                    currentImg.classList.remove('fade-in');
-                    currentImg.classList.add('fade-out');
-            
-                    // Tunggu animasi fade-out selesai, baru display none
-                    setTimeout(() => {
-                        currentImg.classList.remove('active', 'fade-out');
-                        currentImg.style.display = 'none';
-                        nextImg.classList.remove('fade-in');
-                        nextImg.classList.add('active');
-                        currentIndex = newIndex;
-                        isAnimating = false;
-                    }, 500); // Pastikan waktu sama dengan durasi animasi CSS
-                } else {
-                    isAnimating = false;
-                }
-            }
-            
-            // Event listener untuk tombol prev
+
             if (prevBtn) {
-                prevBtn.addEventListener('click', function() {
-                    let newIndex = currentIndex - 1;
-                    if (newIndex < 0) newIndex = images.length - 1;
-                    showImage(newIndex);
-                });
+                prevBtn.addEventListener('click', () => goToSlide(current - 1));
             }
-            
-            // Event listener untuk tombol next
             if (nextBtn) {
-                nextBtn.addEventListener('click', function() {
-                    let newIndex = currentIndex + 1;
-                    if (newIndex >= images.length) newIndex = 0;
-                    showImage(newIndex);
-                });
+                nextBtn.addEventListener('click', () => goToSlide(current + 1));
             }
-            
-            // Event listener untuk indikator
-            indicators.forEach((indicator, index) => {
-                indicator.addEventListener('click', function() {
-                    showImage(index);
+
+            thumbs.forEach(thumb => {
+                thumb.addEventListener('click', function () {
+                    const target = parseInt(this.getAttribute('data-target'), 10);
+                    goToSlide(target);
                 });
             });
-            
-            // Tambahkan dukungan swipe untuk mobile
-            const imageContainer = document.querySelector('.product-image-container');
-            let touchStartX = 0;
-            let touchEndX = 0;
-            
-            if (imageContainer) {
-                imageContainer.addEventListener('touchstart', function(e) {
-                    touchStartX = e.changedTouches[0].screenX;
-                }, false);
-                
-                imageContainer.addEventListener('touchend', function(e) {
-                    touchEndX = e.changedTouches[0].screenX;
-                    handleSwipe();
-                }, false);
-                
-                function handleSwipe() {
-                    const minSwipeDistance = 50;
-                    const swipeDistance = touchEndX - touchStartX;
-                    
-                    if (swipeDistance > minSwipeDistance) {
-                        // Swipe kanan (prev)
-                        let newIndex = currentIndex - 1;
-                        if (newIndex < 0) newIndex = images.length - 1;
-                        showImage(newIndex);
-                    } else if (swipeDistance < -minSwipeDistance) {
-                        // Swipe kiri (next)
-                        let newIndex = currentIndex + 1;
-                        if (newIndex >= images.length) newIndex = 0;
-                        showImage(newIndex);
-                    }
-                }
-            }
         });
     </script>
 </body>
 </html>
-<style>
-    @media (max-width: 768px) {
-        .product-image-container {
-            height: 300px;
-            min-height: 300px;
-        }
-        
-        .nav-arrows {
-            width: 30px;
-            height: 30px;
-        }
-        .product-image video {
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    background: #000;
-}
-    }
-</style>
