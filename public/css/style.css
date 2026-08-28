@@ -333,17 +333,32 @@ body {
 #heroCarousel {
     margin-top: 76px; /* Adjust based on navbar height */
     height: 600px;
+    width: 100%;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0;
+}
+
+#heroCarousel .carousel-inner {
+    height: 100%;
+    width: 100%;
 }
 
 #heroCarousel .carousel-item {
-    height: 600px;
+    height: 100%;
+    width: 100%;
+    position: relative;
+}
+
+#heroCarousel .carousel-item.active {
+    display: block;
 }
 
 #heroCarousel img {
     object-fit: cover;
+    width: 100%;
     height: 100%;
+    display: block;
 }
 
 .overlay {
@@ -353,6 +368,7 @@ body {
     width: 100%;
     height: 100%;
     background: rgba(0,0,0,0.5);
+    z-index: 1;
 }
 
 /* Products Section */
