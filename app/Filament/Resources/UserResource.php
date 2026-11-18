@@ -17,31 +17,50 @@ class UserResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-users';
 
+    protected static ?string $navigationGroup = 'Layanan & Pengguna';
+
+    protected static ?string $navigationLabel = 'Pengguna';
+
+    protected static ?string $pluralModelLabel = 'Pengguna';
+
+    protected static ?string $modelLabel = 'Pengguna';
+
+    protected static ?int $navigationSort = 4;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Nama'),
-                Forms\Components\TextInput::make('email')
-                    ->email()
-                    ->required()
-                    ->maxLength(255)
-                    ->unique(ignoreRecord: true),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->dehydrateStateUsing(fn ($state) => Hash::make($state))
-                    ->required(fn ($context) => $context === 'create')
-                    ->maxLength(255),
-                Forms\Components\Select::make('role')
-                    ->options([
-                        'admin' => 'Admin',
-                        'user' => 'User',
-                    ])
-                    ->required()
-                    ->default('user'),
+                Forms\Components\Section::make('Detail Akun')
+                    ->description('Informasi identitas, peran, dan kredensial pengguna.')
+                    ->columns(2)
+                    ->schema([
+                        Forms\Components\TextInput::make('name')
+                            ->required()
+                            ->maxLength(255)
+                            ->label('Nama'),
+                        Forms\Components\TextInput::make('email')
+                            ->email()
+                            ->required()
+                            ->maxLength(255)
+                            ->unique(ignoreRecord: true),
+                        Forms\Components\TextInput::make('password')
+                            ->password()
+                            ->revealable()
+                            ->dehydrateStateUsing(fn (string $state): string => Hash::make($state))
+                            ->dehydrated(fn (?string $state): bool => filled($state))
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->helperText('Kosongkan saat edit jika tidak ingin mengubah password.')
+                            ->maxLength(255),
+                        Forms\Components\Select::make('role')
+                            ->label('Peran')
+                            ->options([
+                                'admin' => 'Admin',
+                                'user' => 'User',
+                            ])
+                            ->required()
+                            ->default('user'),
+                    ]),
             ]);
     }
 
@@ -58,18 +77,27 @@ class UserResource extends Resource
                     ->sortable(),
                 Tables\Columns\TextColumn::make('role')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => ucfirst($state))
                     ->color(fn (string $state): string => match ($state) {
                         'admin' => 'success',
-                        'user' => 'info',
+                        'user' => 'gray',
+                        default => 'gray',
                     })
                     ->label('Peran'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Terdaftar')
+                    ->dateTime('d M Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
-                //
+                Tables\Filters\SelectFilter::make('role')
+                    ->label('Peran')
+                    ->options([
+                        'admin' => 'Admin',
+                        'user' => 'User',
+                    ]),
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),

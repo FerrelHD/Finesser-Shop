@@ -17,117 +17,160 @@ class ProdukResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Katalog & Penjualan';
+
+    protected static ?string $navigationLabel = 'Produk';
+
+    protected static ?string $pluralModelLabel = 'Produk';
+
+    protected static ?string $modelLabel = 'Produk';
+
+    protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Nama Produk'),
-                Forms\Components\RichEditor::make('description')
-                    ->maxLength(65535)
-                    ->label('Deskripsi')
-                    ->toolbarButtons([
-                        'bold',
-                        'italic',
-                        'underline',
-                        'strike',
-                        'link',
-                        'orderedList',
-                        'unorderedList',
-                        'alignLeft',
-                        'alignCenter',
-                        'alignRight',
-                    ])
-                    ->columnSpanFull(),
-                Forms\Components\FileUpload::make('file_path')
-                    ->label('File Utama (Aset Digital)')
-                    ->disk('local')
-                    ->directory('private/products')
-                    ->maxSize(5242880)
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create')
-                    ->helperText('Kosongkan jika tidak ingin mengganti file master yang sudah ada.')
-                    ->nullable(),
-                Forms\Components\TextInput::make('file_type')
-                    ->required()
-                    ->maxLength(255)
-                    ->label('Tipe File'),
-                FileUpload::make('preview_image')
-                    ->label('Gambar Preview Utama')
-                    ->image()
-                    ->disk('public')
-                    ->visibility('public')
-                    ->directory('produks')
-                    ->openable()
-                    ->downloadable()
-                    ->dehydrated(fn ($state) => filled($state))
-                    ->required(fn (string $operation): bool => $operation === 'create'),
-                
-                FileUpload::make('preview_image_2')
-                    ->label('Gambar Preview 2')
-                    ->image()
-                    ->disk('public')
-                    ->visibility('public')
-                    ->directory('produks')
-                    ->openable()
-                    ->downloadable()
-                    ->nullable(),
-                
-                FileUpload::make('preview_image_3')
-                    ->label('Gambar Preview 3')
-                    ->image()
-                    ->disk('public')
-                    ->visibility('public')
-                    ->directory('produks')
-                    ->openable()
-                    ->downloadable()
-                    ->nullable(),
-                
-                FileUpload::make('preview_video')
-                    ->label('Video Preview')
-                    ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg'])
-                    ->disk('public')
-                    ->visibility('public')
-                    ->directory('produks/videos')
-                    ->maxSize(50000)
-                    ->openable()
-                    ->downloadable()
-                    ->nullable(),
-                
-                Forms\Components\TextInput::make('price')
-                    ->required()
-                    ->numeric()
-                    ->prefix('Rp')
-                    ->label('Harga')
-                    ->minValue(0)
-                    ->maxValue(999999999)
-                    ->step(1000)
-                    ->inputMode('decimal'),
-                
-                Forms\Components\TagsInput::make('tags')
-                    ->separator(',')
-                    ->label('Tag Produk'),
-                Forms\Components\Select::make('license_type')
-                    ->options([
-                        'free' => 'Gratis',
-                        'personal' => 'Personal',
-                        'commercial' => 'Komersial'
-                    ])
-                    ->required()
-                    ->label('Tipe Lisensi'),
-                Forms\Components\Toggle::make('is_active')
-                    ->label('Aktif')
-                    ->default(true),
-                Forms\Components\Toggle::make('is_featured')
-                    ->label('Produk Unggulan')
-                    ->helperText('Tampilkan di bagian Produk Unggulan di halaman utama')
-                    ->default(false),
-                Forms\Components\Toggle::make('is_bundling')
-                    ->label('Produk Bundling')
-                    ->helperText('Tampilkan di bagian Produk Bundling di halaman utama')
-                    ->default(false),
+                Forms\Components\Grid::make([
+                    'default' => 1,
+                    'lg' => 3,
+                ])
+                    ->schema([
+                        Forms\Components\Group::make()
+                            ->columnSpan(['lg' => 2])
+                            ->schema([
+                                Forms\Components\Section::make('Informasi Produk')
+                                    ->description('Detail utama produk digital yang tampil di etalase.')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('title')
+                                            ->required()
+                                            ->maxLength(255)
+                                            ->label('Nama Produk'),
+                                        Forms\Components\RichEditor::make('description')
+                                            ->maxLength(65535)
+                                            ->label('Deskripsi')
+                                            ->toolbarButtons([
+                                                'bold',
+                                                'italic',
+                                                'underline',
+                                                'strike',
+                                                'link',
+                                                'orderedList',
+                                                'unorderedList',
+                                                'alignLeft',
+                                                'alignCenter',
+                                                'alignRight',
+                                            ]),
+                                        Forms\Components\TagsInput::make('tags')
+                                            ->separator(',')
+                                            ->label('Tag Produk'),
+                                    ]),
+
+                                Forms\Components\Section::make('Aset & Media Preview')
+                                    ->description('File master untuk pembeli serta gambar/video pratinjau.')
+                                    ->schema([
+                                        Forms\Components\Grid::make(2)
+                                            ->schema([
+                                                Forms\Components\FileUpload::make('file_path')
+                                                    ->label('File Utama (Aset Digital)')
+                                                    ->disk('local')
+                                                    ->directory('private/products')
+                                                    ->maxSize(5242880)
+                                                    ->dehydrated(fn ($state) => filled($state))
+                                                    ->required(fn (string $operation): bool => $operation === 'create')
+                                                    ->helperText('Kosongkan jika tidak ingin mengganti file master yang sudah ada.')
+                                                    ->nullable(),
+                                                Forms\Components\TextInput::make('file_type')
+                                                    ->required()
+                                                    ->maxLength(255)
+                                                    ->label('Tipe File')
+                                                    ->placeholder('Contoh: MP4, 3D, OBJ, PSD'),
+                                            ]),
+                                        Forms\Components\Grid::make(3)
+                                            ->schema([
+                                                FileUpload::make('preview_image')
+                                                    ->label('Preview Utama')
+                                                    ->image()
+                                                    ->disk('public')
+                                                    ->visibility('public')
+                                                    ->directory('produks')
+                                                    ->openable()
+                                                    ->downloadable()
+                                                    ->dehydrated(fn ($state) => filled($state))
+                                                    ->required(fn (string $operation): bool => $operation === 'create'),
+                                                FileUpload::make('preview_image_2')
+                                                    ->label('Preview 2')
+                                                    ->image()
+                                                    ->disk('public')
+                                                    ->visibility('public')
+                                                    ->directory('produks')
+                                                    ->openable()
+                                                    ->downloadable()
+                                                    ->nullable(),
+                                                FileUpload::make('preview_image_3')
+                                                    ->label('Preview 3')
+                                                    ->image()
+                                                    ->disk('public')
+                                                    ->visibility('public')
+                                                    ->directory('produks')
+                                                    ->openable()
+                                                    ->downloadable()
+                                                    ->nullable(),
+                                            ]),
+                                        FileUpload::make('preview_video')
+                                            ->label('Video Preview')
+                                            ->acceptedFileTypes(['video/mp4', 'video/webm', 'video/ogg'])
+                                            ->disk('public')
+                                            ->visibility('public')
+                                            ->directory('produks/videos')
+                                            ->maxSize(50000)
+                                            ->openable()
+                                            ->downloadable()
+                                            ->nullable(),
+                                    ]),
+                            ]),
+
+                        Forms\Components\Group::make()
+                            ->columnSpan(['lg' => 1])
+                            ->schema([
+                                Forms\Components\Section::make('Harga & Lisensi')
+                                    ->schema([
+                                        Forms\Components\TextInput::make('price')
+                                            ->required()
+                                            ->numeric()
+                                            ->prefix('Rp')
+                                            ->label('Harga')
+                                            ->minValue(0)
+                                            ->maxValue(999999999)
+                                            ->step(1000)
+                                            ->inputMode('decimal'),
+                                        Forms\Components\Select::make('license_type')
+                                            ->options([
+                                                'free' => 'Gratis',
+                                                'personal' => 'Personal',
+                                                'commercial' => 'Komersial',
+                                            ])
+                                            ->required()
+                                            ->label('Tipe Lisensi'),
+                                    ]),
+
+                                Forms\Components\Section::make('Visibilitas Etalase')
+                                    ->schema([
+                                        Forms\Components\Toggle::make('is_active')
+                                            ->label('Aktif')
+                                            ->helperText('Tampilkan produk di toko')
+                                            ->default(true),
+                                        Forms\Components\Toggle::make('is_featured')
+                                            ->label('Produk Unggulan')
+                                            ->helperText('Tampilkan di bagian Produk Unggulan di halaman utama')
+                                            ->default(false),
+                                        Forms\Components\Toggle::make('is_bundling')
+                                            ->label('Produk Bundling')
+                                            ->helperText('Tampilkan di bagian Produk Bundling di halaman utama')
+                                            ->default(false),
+                                    ]),
+                            ]),
+                    ]),
             ]);
     }
 
@@ -135,19 +178,17 @@ class ProdukResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable()
-                    ->sortable()
-                    ->label('Nama Produk'),
                 Tables\Columns\ImageColumn::make('preview_image')
                     ->label('Preview')
                     ->disk('public')
                     ->visibility('public')
-                    ->size(80)
+                    ->size(52)
                     ->square(),
-                Tables\Columns\TextColumn::make('preview_video')
-                    ->label('Video Preview')
-                    ->searchable(),
+                Tables\Columns\TextColumn::make('title')
+                    ->searchable()
+                    ->sortable()
+                    ->label('Nama Produk')
+                    ->description(fn (Produk $record): string => strtoupper($record->file_type ?? '-')),
                 Tables\Columns\TextColumn::make('price')
                     ->money('IDR')
                     ->sortable()
@@ -155,14 +196,26 @@ class ProdukResource extends Resource
                 Tables\Columns\TextColumn::make('license_type')
                     ->label('Lisensi')
                     ->badge()
+                    ->formatStateUsing(fn (string $state): string => match ($state) {
+                        'free' => 'Gratis',
+                        'personal' => 'Personal',
+                        'commercial' => 'Komersial',
+                        default => $state,
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'free' => 'success',
                         'personal' => 'info',
                         'commercial' => 'warning',
+                        default => 'gray',
                     }),
+                Tables\Columns\IconColumn::make('preview_video')
+                    ->label('Video')
+                    ->boolean()
+                    ->state(fn (Produk $record): bool => filled($record->preview_video))
+                    ->toggleable(isToggledHiddenByDefault: true),
                 Tables\Columns\IconColumn::make('is_active')
                     ->boolean()
-                    ->label('Status'),
+                    ->label('Aktif'),
                 Tables\Columns\IconColumn::make('is_featured')
                     ->boolean()
                     ->label('Unggulan'),
@@ -170,16 +223,18 @@ class ProdukResource extends Resource
                     ->boolean()
                     ->label('Bundling'),
                 Tables\Columns\TextColumn::make('created_at')
-                    ->dateTime()
+                    ->label('Dibuat')
+                    ->dateTime('d M Y')
                     ->sortable()
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
+            ->defaultSort('created_at', 'desc')
             ->filters([
                 Tables\Filters\SelectFilter::make('license_type')
                     ->options([
                         'free' => 'Gratis',
                         'personal' => 'Personal',
-                        'commercial' => 'Komersial'
+                        'commercial' => 'Komersial',
                     ])
                     ->label('Tipe Lisensi'),
                 Tables\Filters\TernaryFilter::make('is_active')
