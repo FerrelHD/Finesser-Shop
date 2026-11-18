@@ -1,0 +1,133 @@
+/* Finesser Admin — Minimalis Monokrom Theme for Filament 3 */
+
+:root {
+    --finesser-border: rgba(24, 24, 27, 0.08);
+    --finesser-border-strong: rgba(24, 24, 27, 0.14);
+    --finesser-surface: #ffffff;
+    --finesser-canvas: #fafafa;
+}
+
+.dark {
+    --finesser-border: rgba(255, 255, 255, 0.08);
+    --finesser-border-strong: rgba(255, 255, 255, 0.14);
+    --finesser-surface: #111113;
+    --finesser-canvas: #09090b;
+}
+
+/* Soft minimalist page canvas */
+.fi-body {
+    background-color: var(--finesser-canvas);
+    letter-spacing: -0.01em;
+}
+
+/* Topbar & Sidebar crisp hairline separation */
+.fi-topbar > nav {
+    background-color: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--finesser-border) !important;
+    box-shadow: none !important;
+}
+
+.dark .fi-topbar > nav {
+    background-color: rgba(17, 17, 19, 0.85) !important;
+}
+
+.fi-sidebar {
+    background-color: var(--finesser-surface) !important;
+    border-right: 1px solid var(--finesser-border) !important;
+}
+
+.fi-sidebar-header {
+    background-color: transparent !important;
+    border-bottom: 1px solid var(--finesser-border);
+    box-shadow: none !important;
+}
+
+/* Sidebar group labels & active item pill */
+.fi-sidebar-group-label {
+    font-size: 0.6875rem !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    color: #71717a !important;
+}
+
+.fi-sidebar-item-active > a {
+    background-color: #18181b !important;
+    color: #ffffff !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+}
+
+.fi-sidebar-item-active > a .fi-sidebar-item-icon,
+.fi-sidebar-item-active > a .fi-sidebar-item-label {
+    color: #ffffff !important;
+}
+
+.dark .fi-sidebar-item-active > a {
+    background-color: #fafafa !important;
+    color: #09090b !important;
+}
+
+.dark .fi-sidebar-item-active > a .fi-sidebar-item-icon,
+.dark .fi-sidebar-item-active > a .fi-sidebar-item-label {
+    color: #09090b !important;
+}
+
+/* Refined cards, sections, stats & tables */
+.fi-section,
+.fi-wi-stats-overview-stat,
+.fi-wi-chart,
+.fi-ta-ctn,
+.fi-fo-tabs,
+.fi-in-tabs,
+.fi-account-widget {
+    border-radius: 0.875rem !important;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03) !important;
+    border: 1px solid var(--finesser-border) !important;
+}
+
+.fi-wi-stats-overview-stat {
+    transition: border-color 150ms ease, transform 150ms ease;
+}
+
+.fi-wi-stats-overview-stat:hover {
+    border-color: var(--finesser-border-strong) !important;
+}
+
+/* Table header & rows */
+.fi-ta-header-ctn,
+.fi-ta-table thead tr {
+    background-color: rgba(244, 244, 245, 0.6) !important;
+}
+
+.dark .fi-ta-header-ctn,
+.dark .fi-ta-table thead tr {
+    background-color: rgba(39, 39, 42, 0.45) !important;
+}
+
+/* Crisp primary buttons in monochrome */
+.fi-btn-color-primary {
+    background-color: #18181b !important;
+    color: #ffffff !important;
+}
+
+.fi-btn-color-primary:hover {
+    background-color: #27272a !important;
+}
+
+.dark .fi-btn-color-primary {
+    background-color: #fafafa !important;
+    color: #09090b !important;
+}
+
+.dark .fi-btn-color-primary:hover {
+    background-color: #e4e4e7 !important;
+}
+
+/* Login page card polish */
+.fi-simple-main {
+    border-radius: 1rem !important;
+    border: 1px solid var(--finesser-border) !important;
+    box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.08) !important;
+}

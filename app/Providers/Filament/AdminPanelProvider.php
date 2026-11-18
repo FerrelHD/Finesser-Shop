@@ -9,6 +9,8 @@ use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
 use Filament\Support\Colors\Color;
+use Filament\Support\Enums\MaxWidth;
+use Filament\View\PanelsRenderHook;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
@@ -16,6 +18,7 @@ use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
+use Illuminate\Support\HtmlString;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
 
 class AdminPanelProvider extends PanelProvider
@@ -29,13 +32,33 @@ class AdminPanelProvider extends PanelProvider
             ->login()
             ->loginRouteSlug('login')
             ->brandName('Finesser')
+            ->brandLogo(fn () => view('filament.brand-logo'))
+            ->brandLogoHeight('1.75rem')
+            ->font('Poppins')
             ->authGuard('web')
             ->authPasswordBroker('users')
             ->homeUrl('/admin')
             // Menghapus pilihan 'Kembali ke Website'
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::Zinc,
+                'gray' => Color::Zinc,
+                'info' => Color::Sky,
+                'success' => Color::Emerald,
+                'warning' => Color::Amber,
+                'danger' => Color::Rose,
             ])
+            ->maxContentWidth(MaxWidth::SevenExtraLarge)
+            ->sidebarCollapsibleOnDesktop()
+            ->navigationGroups([
+                'Katalog & Penjualan',
+                'Layanan & Pengguna',
+            ])
+            ->renderHook(
+                PanelsRenderHook::HEAD_END,
+                fn (): HtmlString => new HtmlString(
+                    '<link rel="stylesheet" href="' . asset('css/filament-admin.css') . '">'
+                ),
+            )
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
             ->pages([
@@ -44,7 +67,6 @@ class AdminPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 Widgets\AccountWidget::class,
-                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,
